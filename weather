@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Buggy SF Weather App</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 60px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      padding: 24px;
+      display: inline-block;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>San Francisco Weather</h1>
+    <h2 id="time">Loading time...</h2>
+    <p id="weather">Loading weather...</p>
+  </div>
+
+  <script>
+    const timeEl = document.getElementById("time");
+    const weatherEl = document.getElementById("weather");
+
+    function updateTime() {
+      const now = new Date();
+
+      // Bug: uses user's local timezone, not San Francisco timezone
+      timeEl.textContent = "Local time: " + now.toLocaleTimeString();
+    }
+
+    async function getWeather() {
+      try {
+        const url =
+          "https://api.open-meteo.com/v1/forecast?latitude=37.7749&longitude=-122.4194&current_weather=true";
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Bug: typo in property name, should be current_weather
+        const temp = data.current_weather.temperature;
+        const wind = data.current_weather.windspeed;
+
+        // Bug: Open-Meteo returns Celsius, but this labels it Fahrenheit
+        weatherEl.textContent = `Temperature: ${temp}°F, Wind: ${wind} mph`;
+      } catch (error) {
+        weatherEl.textContent = "Weather failed to load.";
+        console.log("Buggy error:", error);
+      }
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    getWeather();
+  </script>
+</body>
+</html>
