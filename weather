@@ -43,7 +43,7 @@
         const data = await response.json();
 
         // Bug: typo in property name, should be current_weather
-        const temp = data.currentWeather.temperature;
+        const temp = data.current_weather.temperature;
         const wind = data.current_weather.windspeed;
 
         // Bug: Open-Meteo returns Celsius, but this labels it Fahrenheit
